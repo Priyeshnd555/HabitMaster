@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, RotateCcw, CheckCircle, History, Edit2, Save, Trash2, Plus, X, FolderPlus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Pause, RotateCcw, CheckCircle, History, Edit2, Save, Trash2, Plus, X, FolderPlus } from 'lucide-react';
 
 // --- Default Data (Cleaned up for new users) ---
 const DEFAULT_CATEGORIES = [
@@ -22,7 +22,7 @@ const COLORS = [
 ];
 
 const App = () => {
-  // --- State Initialization with Migration Logic ---
+  // --- State Initialization ---
   const [categories, setCategories] = useState(() => {
     const saved = localStorage.getItem('cultureSyncCategories');
     return saved ? JSON.parse(saved) : DEFAULT_CATEGORIES;
@@ -32,14 +32,9 @@ const App = () => {
     const saved = localStorage.getItem('cultureSyncTasks');
     let parsedTasks = saved ? JSON.parse(saved) : DEFAULT_TASKS;
 
-    // Migration: If tasks don't have categoryId (from v1), map them using 'language'
+    // Migration logic for older versions
     if (parsedTasks.length > 0 && !parsedTasks[0].categoryId) {
-      // If migrating from old version with specific languages, try to map or default to the first category
-      const defaultCats = DEFAULT_CATEGORIES; 
-      parsedTasks = parsedTasks.map(t => {
-        // Simple fallback since we removed specific default categories
-        return { ...t, categoryId: 'c1' }; 
-      });
+      parsedTasks = parsedTasks.map(t => ({ ...t, categoryId: 'c1' })); 
     }
     return parsedTasks;
   });
